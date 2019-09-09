@@ -14,6 +14,7 @@ namespace Chessington.GameEngine.Pieces
             List<Square> moves = GetAdjacentMoves(location);
 
             moves = ClipToBoard(moves, board);
+            moves = RemoveFriendlyTakes(moves, board);
 
             return moves;
         }
@@ -37,6 +38,12 @@ namespace Chessington.GameEngine.Pieces
         private List<Square> ClipToBoard(List<Square> moves, Board board)
         {
             moves.RemoveAll(s => !board.IsWithinBounds(s));
+            return moves;
+        }
+
+        private List<Square> RemoveFriendlyTakes(List<Square> moves, Board board)
+        {
+            moves.RemoveAll(s => (board.GetPiece(s) != null) && (board.GetPiece(s).Player == this.Player));
             return moves;
         }
     }
