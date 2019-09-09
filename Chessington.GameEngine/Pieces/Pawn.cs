@@ -17,7 +17,7 @@ namespace Chessington.GameEngine.Pieces
             {
                 moves.Add(new Square(location.Row - 1, location.Col));
 
-                if (!hasMoved)
+                if (!HasMoved)
                 {
                     moves.Add(new Square(location.Row - 2, location.Col));
                 }
@@ -27,7 +27,7 @@ namespace Chessington.GameEngine.Pieces
             {
                 moves.Add(new Square(location.Row + 1, location.Col));
 
-                if (!hasMoved)
+                if (!HasMoved)
                 {
                     moves.Add(new Square(location.Row + 2, location.Col));
                 }
