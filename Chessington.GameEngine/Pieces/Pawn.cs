@@ -29,6 +29,16 @@ namespace Chessington.GameEngine.Pieces
         private List<Square> GetMoves(Square location, Board board, Direction direction)
         {
             List<Square> moves = new List<Square>();
+
+            moves.AddRange(CheckForwardMoves(location, board, direction));
+            moves.AddRange(CheckDiagonalMoves(location, board, direction));
+
+            return moves;
+        }
+
+        private List<Square> CheckForwardMoves(Square location, Board board, Direction direction)
+        {
+            List<Square> moves = new List<Square>();
             Square moveLocation = location + direction;
 
             if (board.IsWithinBounds(moveLocation) && board.IsEmpty(moveLocation))
@@ -45,6 +55,28 @@ namespace Chessington.GameEngine.Pieces
             {
                 moves.Add(moveLocation);
             }
+
+            return moves;
+        }
+
+        private List<Square> CheckDiagonalMoves(Square location, Board board, Direction direction)
+        {
+            Square leftDiagonal = location + direction + new Direction(0, -1);
+            Square rightDiagonal = location + direction + new Direction(0, 1);
+
+            List<Square> moves = new List<Square>();
+
+            if (board.IsWithinBounds(leftDiagonal) && !board.IsEmpty(leftDiagonal))
+            {
+                moves.Add(leftDiagonal);
+            }
+
+            if (board.IsWithinBounds(rightDiagonal) && !board.IsEmpty(rightDiagonal))
+            {
+                moves.Add(rightDiagonal);
+            }
+
+            moves = RemoveFriendlyTakes(moves, board);
 
             return moves;
         }
