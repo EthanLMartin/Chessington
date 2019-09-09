@@ -14,75 +14,32 @@ namespace Chessington.GameEngine.Pieces
             List<Square> moves = new List<Square>();
             Square location = board.FindPiece(this);
 
-            moves.AddRange(GetVerticalMovement(location, board));
-            moves.AddRange(GetHorizontalMovement(location, board));
-
-            moves = ClipToBoard(moves, board);
+            moves.AddRange(GetLateralMovements(location, board, 1, 0));
+            moves.AddRange(GetLateralMovements(location, board, -1, 0));
+            moves.AddRange(GetLateralMovements(location, board, 0, 1));
+            moves.AddRange(GetLateralMovements(location, board, 0, -1));
 
             return moves;
         }
 
-        private List<Square> GetVerticalMovement(Square location, Board board)
+        private List<Square> GetLateralMovements(Square location, Board board, int rowDirection, int colDirection)
         {
             List<Square> moves = new List<Square>();
 
-            int offset = 1;
-            while (board.IsWithinBounds(new Square(location.Row + offset, location.Col)))
+            int rowOffset = rowDirection;
+            int colOffset = colDirection;
+
+            while (board.IsWithinBounds(new Square(location.Row + rowOffset, location.Col + colOffset)))
             {
-                moves.Add(new Square(location.Row + offset, location.Col));
-                if (!board.IsEmpty(location.Row + offset, location.Col))
+                moves.Add(new Square(location.Row + rowOffset, location.Col + colOffset));
+                if (!board.IsEmpty(location.Row + rowOffset, location.Col + colOffset))
                 {
                     break;
                 }
-                offset++;
+                rowOffset += rowDirection;
+                colOffset += colDirection;
             }
 
-            offset = -1;
-            while (board.IsWithinBounds(new Square(location.Row + offset, location.Col)))
-            {
-                moves.Add(new Square(location.Row + offset, location.Col));
-                if (!board.IsEmpty(location.Row + offset, location.Col))
-                {
-                    break;
-                }
-                offset--;
-            }
-
-            return moves;
-        }
-
-        private List<Square> GetHorizontalMovement(Square location, Board board)
-        {
-            List<Square> moves = new List<Square>();
-
-            int offset = 1;
-            while (board.IsWithinBounds(new Square(location.Row, location.Col + offset)))
-            {
-                moves.Add(new Square(location.Row, location.Col + offset));
-                if (!board.IsEmpty(location.Row, location.Col + offset))
-                {
-                    break;
-                }
-                offset++;
-            }
-
-            offset = -1;
-            while (board.IsWithinBounds(new Square(location.Row, location.Col + offset)))
-            {
-                moves.Add(new Square(location.Row, location.Col + offset));
-                if (!board.IsEmpty(location.Row, location.Col + offset))
-                {
-                    break;
-                }
-                offset--;
-            }
-
-            return moves;
-        }
-
-        private List<Square> ClipToBoard(List<Square> moves, Board board)
-        {
-            moves.RemoveAll(s => !board.IsWithinBounds(s));
             return moves;
         }
     }

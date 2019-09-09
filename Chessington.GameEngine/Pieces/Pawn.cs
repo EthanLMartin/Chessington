@@ -15,53 +15,32 @@ namespace Chessington.GameEngine.Pieces
             switch (this.Player)
             {
                 case Player.White:
-                    return GetMovesWhite(location, board);
+                    return GetMoves(location, board, -1);
 
                 case Player.Black:
-                    return GetMovesBlack(location, board);
+                    return GetMoves(location, board, 1);
 
                 default:
                     return new List<Square>();
             }
         }
 
-        private List<Square> GetMovesWhite(Square location, Board board)
+        private List<Square> GetMoves(Square location, Board board, int direction)
         {
             List<Square> moves = new List<Square>();
 
-            if (board.IsEmpty(location.Row - 1, location.Col))
+            if (board.IsEmpty(location.Row + direction, location.Col))
             {
-                moves.Add(new Square(location.Row - 1, location.Col));
+                moves.Add(new Square(location.Row + direction, location.Col));
             }
             else
             {
                 return moves;
             }
 
-            if (!HasMoved && board.IsEmpty(location.Row - 2, location.Col))
+            if (!HasMoved && board.IsEmpty(location.Row + direction * 2, location.Col))
             {
-                moves.Add(new Square(location.Row - 2, location.Col));
-            }
-
-            return moves;
-        }
-
-        private List<Square> GetMovesBlack(Square location, Board board)
-        {
-            List<Square> moves = new List<Square>();
-
-            if (board.IsEmpty(location.Row + 1, location.Col))
-            {
-                moves.Add(new Square(location.Row + 1, location.Col));
-            }
-            else
-            {
-                return moves;
-            }
-
-            if (!HasMoved && board.IsEmpty(location.Row + 2, location.Col))
-            {
-                moves.Add(new Square(location.Row + 2, location.Col));
+                moves.Add(new Square(location.Row + direction * 2, location.Col));
             }
 
             return moves;
