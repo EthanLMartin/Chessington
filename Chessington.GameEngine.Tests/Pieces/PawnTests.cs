@@ -203,21 +203,21 @@ namespace Chessington.GameEngine.Tests.Pieces
         }
 
         [Test]
-        public void WhitePawns_CanTakeMoveDiagonally_IfEnPassantIsActive()
+        public void BlackPawns_CanTakeMoveDiagonally_IfEnPassantIsActive()
         {
             var board = new Board();
             var pawn = new Pawn(Player.White);
-            board.AddPiece(Square.At(3, 1), pawn);
+            board.AddPiece(Square.At(4, 1), pawn);
 
             var enemyPiece = new Pawn(Player.Black);
-            board.AddPiece(Square.At(6,0), enemyPiece);
+            board.AddPiece(Square.At(1,0), enemyPiece);
 
-            pawn.MoveTo(board,Square.At(4, 1));
-            enemyPiece.MoveTo(board, Square.At(4,0));
+            pawn.MoveTo(board,Square.At(3, 1));
+            enemyPiece.MoveTo(board, Square.At(3,0));
 
             var moves = pawn.GetAvailableMoves(board).ToList();
 
-            moves.Should().Contain(Square.At(5, 0));
+            moves.Should().Contain(Square.At(2, 0));
         }
 
         [Test]
@@ -225,23 +225,23 @@ namespace Chessington.GameEngine.Tests.Pieces
         {
             var board = new Board();
             var pawn = new Pawn(Player.White);
-            board.AddPiece(Square.At(2, 1), pawn);
+            board.AddPiece(Square.At(5, 1), pawn);
 
             var enemyPawn = new Pawn(Player.Black);
-            board.AddPiece(Square.At(6, 0), enemyPawn);
+            board.AddPiece(Square.At(1, 0), enemyPawn);
 
             var enemyPiece = new Rook(Player.Black);
-            board.AddPiece(Square.At(7, 3), enemyPiece);
-
-            pawn.MoveTo(board, Square.At(3, 1));
-            enemyPawn.MoveTo(board, Square.At(4, 0));
+            board.AddPiece(Square.At(1, 7), enemyPiece);
 
             pawn.MoveTo(board, Square.At(4, 1));
+            enemyPawn.MoveTo(board, Square.At(3, 0));
+
+            pawn.MoveTo(board, Square.At(3, 1));
             enemyPiece.MoveTo(board, Square.At(7,7));
 
             var moves = pawn.GetAvailableMoves(board).ToList();
 
-            moves.Should().NotContain(Square.At(5, 0));
+            moves.Should().NotContain(Square.At(2, 0));
         }
 
         [Test]
@@ -249,20 +249,20 @@ namespace Chessington.GameEngine.Tests.Pieces
         {
             var board = new Board();
             var pawn = new Pawn(Player.White);
-            board.AddPiece(Square.At(2, 1), pawn);
+            board.AddPiece(Square.At(5, 1), pawn);
 
-            var enemyPiece = new Pawn(Player.Black);
-            board.AddPiece(Square.At(6, 0), enemyPiece);
-
-            pawn.MoveTo(board, Square.At(3,1));
-            enemyPiece.MoveTo(board, Square.At(5, 0));
+            var enemyPawn = new Pawn(Player.Black);
+            board.AddPiece(Square.At(1, 0), enemyPawn);
 
             pawn.MoveTo(board, Square.At(4, 1));
-            enemyPiece.MoveTo(board, Square.At(4, 0));
+            enemyPawn.MoveTo(board, Square.At(2, 0));
+
+            pawn.MoveTo(board, Square.At(3, 1));
+            enemyPawn.MoveTo(board, Square.At(3, 0));
 
             var moves = pawn.GetAvailableMoves(board).ToList();
 
-            moves.Should().NotContain(Square.At(5, 0));
+            moves.Should().NotContain(Square.At(2, 0));
         }
     }
 }
