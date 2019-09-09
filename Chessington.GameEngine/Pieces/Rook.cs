@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Chessington.GameEngine.Pieces
 {
@@ -13,19 +14,75 @@ namespace Chessington.GameEngine.Pieces
             List<Square> moves = new List<Square>();
             Square location = board.FindPiece(this);
 
-            for (int row = 0; row < GameSettings.BoardSize; row++)
+            moves.AddRange(GetVerticalMovement(location, board));
+            moves.AddRange(GetHorizontalMovement(location, board));
+
+            moves = ClipToBoard(moves, board);
+
+            return moves;
+        }
+
+        private List<Square> GetVerticalMovement(Square location, Board board)
+        {
+            List<Square> moves = new List<Square>();
+
+            int offset = 1;
+            while (board.IsWithinBounds(new Square(location.Row + offset, location.Col)))
             {
-                moves.Add(new Square(row, location.Col));
+                moves.Add(new Square(location.Row + offset, location.Col));
+                if (!board.IsEmpty(location.Row + offset, location.Col))
+                {
+                    break;
+                }
+                offset++;
             }
 
-            for (int col = 0; col < GameSettings.BoardSize; col++)
+            offset = -1;
+            while (board.IsWithinBounds(new Square(location.Row + offset, location.Col)))
             {
-                moves.Add(new Square(location.Row, col));
+                moves.Add(new Square(location.Row + offset, location.Col));
+                if (!board.IsEmpty(location.Row + offset, location.Col))
+                {
+                    break;
+                }
+                offset--;
             }
 
-            // Remove starting location
-            moves.RemoveAll(s => s == location);
+            return moves;
+        }
 
+        private List<Square> GetHorizontalMovement(Square location, Board board)
+        {
+            List<Square> moves = new List<Square>();
+
+            int offset = 1;
+            while (board.IsWithinBounds(new Square(location.Row, location.Col + offset)))
+            {
+                moves.Add(new Square(location.Row, location.Col + offset));
+                if (!board.IsEmpty(location.Row, location.Col + offset))
+                {
+                    break;
+                }
+                offset++;
+            }
+
+            offset = -1;
+            while (board.IsWithinBounds(new Square(location.Row, location.Col + offset)))
+            {
+                moves.Add(new Square(location.Row, location.Col + offset));
+                if (!board.IsEmpty(location.Row, location.Col + offset))
+                {
+                    break;
+                }
+                offset--;
+            }
+
+            return moves;
+        }
+
+        private List<Square> ClipToBoard(List<Square> moves, Board board)
+        {
+            moves.RemoveAll(s => !board.IsWithinBounds(s));
             return moves;
         }
     }
