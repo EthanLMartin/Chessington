@@ -28,8 +28,9 @@ namespace Chessington.GameEngine.Pieces
         private List<Square> GetMoves(Square location, Board board, int direction)
         {
             List<Square> moves = new List<Square>();
+            Square newLocation = new Square(location.Row + direction, location.Col);
 
-            if (board.IsEmpty(location.Row + direction, location.Col))
+            if (board.IsWithinBounds(newLocation) && board.IsEmpty(newLocation))
             {
                 moves.Add(new Square(location.Row + direction, location.Col));
             }
@@ -38,7 +39,8 @@ namespace Chessington.GameEngine.Pieces
                 return moves;
             }
 
-            if (!HasMoved && board.IsEmpty(location.Row + direction * 2, location.Col))
+            newLocation = new Square(location.Row + (direction * 2), location.Col);
+            if (!HasMoved && board.IsWithinBounds(newLocation) && board.IsEmpty(newLocation))
             {
                 moves.Add(new Square(location.Row + direction * 2, location.Col));
             }

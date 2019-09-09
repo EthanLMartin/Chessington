@@ -31,9 +31,9 @@ namespace Chessington.GameEngine
             return board[square.Row, square.Col];
         }
 
-        public bool IsEmpty(int row, int col)
+        public bool IsEmpty(Square location)
         {
-            return (GetPiece(new Square(row, col)) == null);
+            return (GetPiece(location) == null);
         }
 
         public Square FindPiece(Piece piece)
