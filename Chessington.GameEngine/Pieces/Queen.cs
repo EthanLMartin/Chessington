@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Chessington.GameEngine.Pieces
 {
-    public class Queen : Piece
+    public class Queen : TravelingPiece
     {
         public Queen(Player player)
             : base(player) { }
@@ -39,27 +39,6 @@ namespace Chessington.GameEngine.Pieces
             moves.AddRange(GetLineOffsetMovements(location, board, -1, 0));
             moves.AddRange(GetLineOffsetMovements(location, board, 0, 1));
             moves.AddRange(GetLineOffsetMovements(location, board, 0, -1));
-
-            return moves;
-        }
-
-        private List<Square> GetLineOffsetMovements(Square location, Board board, int rowDirection, int colDirection)
-        {
-            List<Square> moves = new List<Square>();
-
-            int rowOffset = rowDirection;
-            int colOffset = colDirection;
-
-            while (board.IsWithinBounds(new Square(location.Row + rowOffset, location.Col + colOffset)))
-            {
-                moves.Add(new Square(location.Row + rowOffset, location.Col + colOffset));
-                if (!board.IsEmpty(location.Row + rowOffset, location.Col + colOffset))
-                {
-                    break;
-                }
-                rowOffset += rowDirection;
-                colOffset += colDirection;
-            }
 
             return moves;
         }
