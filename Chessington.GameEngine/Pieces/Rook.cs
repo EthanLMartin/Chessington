@@ -13,12 +13,12 @@ namespace Chessington.GameEngine.Pieces
             List<Square> moves = new List<Square>();
             Square location = board.FindPiece(this);
 
-            for (int row = 0; row < 8; row++)
+            for (int row = 0; row < GameSettings.BoardSize; row++)
             {
                 moves.Add(new Square(row, location.Col));
             }
 
-            for (int col = 0; col < 8; col++)
+            for (int col = 0; col < GameSettings.BoardSize; col++)
             {
                 moves.Add(new Square(location.Row, col));
             }

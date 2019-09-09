@@ -11,17 +11,17 @@ namespace Chessington.GameEngine.Pieces
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
             Square location = board.FindPiece(this);
-            List<Square> moves = GetAllDiagonals(location, GameSettings.BoardSize);
-            moves.RemoveAll(s => !board.IsWithinBounds(s));
+            List<Square> moves = GetDiagonalMoves(location);
+            moves = ClipToBoard(moves, board);
 
             return moves;
         }
 
-        private List<Square> GetAllDiagonals(Square location, int range)
+        private List<Square> GetDiagonalMoves(Square location)
         {
             List<Square> moves = new List<Square>();
 
-            for (int i = 1; i < range; i++)
+            for (int i = 1; i < GameSettings.BoardSize; i++)
             {
                 moves.Add(new Square(location.Row + i, location.Col + i));
                 moves.Add(new Square(location.Row + i, location.Col - i));
@@ -29,6 +29,12 @@ namespace Chessington.GameEngine.Pieces
                 moves.Add(new Square(location.Row - i, location.Col - i));
             }
 
+            return moves;
+        }
+
+        private List<Square> ClipToBoard(List<Square> moves, Board board)
+        {
+            moves.RemoveAll(s => !board.IsWithinBounds(s));
             return moves;
         }
     }
