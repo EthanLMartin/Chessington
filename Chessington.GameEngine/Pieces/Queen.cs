@@ -23,10 +23,10 @@ namespace Chessington.GameEngine.Pieces
         {
             List<Square> moves = new List<Square>();
 
-            moves.AddRange(GetLineOffsetMovements(location, board, 1, 1));
-            moves.AddRange(GetLineOffsetMovements(location, board, 1, -1));
-            moves.AddRange(GetLineOffsetMovements(location, board, -1, 1));
-            moves.AddRange(GetLineOffsetMovements(location, board, -1, -1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, 1, 1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, 1, -1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, -1, 1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, -1, -1));
 
             return moves;
         }
@@ -35,10 +35,10 @@ namespace Chessington.GameEngine.Pieces
         {
             List<Square> moves = new List<Square>();
 
-            moves.AddRange(GetLineOffsetMovements(location, board, 1, 0));
-            moves.AddRange(GetLineOffsetMovements(location, board, -1, 0));
-            moves.AddRange(GetLineOffsetMovements(location, board, 0, 1));
-            moves.AddRange(GetLineOffsetMovements(location, board, 0, -1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, 1, 0));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, -1, 0));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, 0, 1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, 0, -1));
 
             return moves;
         }

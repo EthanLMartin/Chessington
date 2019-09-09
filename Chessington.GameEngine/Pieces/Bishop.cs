@@ -17,14 +17,15 @@ namespace Chessington.GameEngine.Pieces
 
             return moves;
         }
+
         private List<Square> GetDiagonalMoves(Square location, Board board)
         {
             List<Square> moves = new List<Square>();
 
-            moves.AddRange(GetLineOffsetMovements(location, board, 1, 1));
-            moves.AddRange(GetLineOffsetMovements(location, board, 1, -1));
-            moves.AddRange(GetLineOffsetMovements(location, board, -1, 1));
-            moves.AddRange(GetLineOffsetMovements(location, board, -1, -1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, 1, 1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, 1, -1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, -1, 1));
+            moves.AddRange(GetLineOffsetMovements(location, board, this.Player, -1, -1));
 
             return moves;
         }
