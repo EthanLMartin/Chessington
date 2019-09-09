@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Chessington.GameEngine.Pieces
 {
-    public class King : Piece
+    public class King : NonTravelingPiece
     {
         public King(Player player)
             : base(player) { }
@@ -13,7 +13,7 @@ namespace Chessington.GameEngine.Pieces
             Square location = board.FindPiece(this);
             List<Square> moves = GetAdjacentMoves(location);
 
-            moves = ClipToBoard(moves, board);
+            moves = board.ClipToBoard(moves);
             moves = RemoveFriendlyTakes(moves, board);
 
             return moves;
@@ -21,29 +21,18 @@ namespace Chessington.GameEngine.Pieces
 
         private List<Square> GetAdjacentMoves(Square location)
         {
-            List<Square> moves = new List<Square>();
+            List<Square> moves = new List<Square>
+            {
+                location + new Direction(1, 1),
+                location + new Direction(1, -1),
+                location + new Direction(-1, 1),
+                location + new Direction(-1, -1),
+                location + new Direction(0, 1),
+                location + new Direction(0, -1),
+                location + new Direction(1, 0),
+                location + new Direction(-1, 0)
+            };
 
-            moves.Add(new Square(location.Row + 1, location.Col + 1));
-            moves.Add(new Square(location.Row + 1, location.Col - 1));
-            moves.Add(new Square(location.Row - 1, location.Col + 1));
-            moves.Add(new Square(location.Row - 1, location.Col - 1));
-            moves.Add(new Square(location.Row + 1, location.Col));
-            moves.Add(new Square(location.Row - 1, location.Col));
-            moves.Add(new Square(location.Row, location.Col + 1));
-            moves.Add(new Square(location.Row, location.Col - 1));
-
-            return moves;
-        }
-
-        private List<Square> ClipToBoard(List<Square> moves, Board board)
-        {
-            moves.RemoveAll(s => !board.IsWithinBounds(s));
-            return moves;
-        }
-
-        private List<Square> RemoveFriendlyTakes(List<Square> moves, Board board)
-        {
-            moves.RemoveAll(s => (board.GetPiece(s) != null) && (board.GetPiece(s).Player == this.Player));
             return moves;
         }
     }

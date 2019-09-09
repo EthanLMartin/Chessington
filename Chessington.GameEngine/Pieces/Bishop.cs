@@ -22,10 +22,10 @@ namespace Chessington.GameEngine.Pieces
         {
             List<Square> moves = new List<Square>();
 
-            moves.AddRange(GetLineOffsetMovements(location, board, 1, 1));
-            moves.AddRange(GetLineOffsetMovements(location, board, 1, -1));
-            moves.AddRange(GetLineOffsetMovements(location, board, -1, 1));
-            moves.AddRange(GetLineOffsetMovements(location, board, -1, -1));
+            moves.AddRange(GetLineOffsetMovements(location, board, new Direction(1, 1)));
+            moves.AddRange(GetLineOffsetMovements(location, board, new Direction(1, -1)));
+            moves.AddRange(GetLineOffsetMovements(location, board, new Direction(-1, 1)));
+            moves.AddRange(GetLineOffsetMovements(location, board, new Direction(-1, -1)));
 
             return moves;
         }

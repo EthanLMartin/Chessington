@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Chessington.GameEngine.Pieces
 {
-    public class Pawn : Piece
+    public class Pawn : NonTravelingPiece
     {
         public Pawn(Player player) 
             : base(player) { }
@@ -15,34 +16,34 @@ namespace Chessington.GameEngine.Pieces
             switch (this.Player)
             {
                 case Player.White:
-                    return GetMoves(location, board, -1);
+                    return GetMoves(location, board, new Direction(-1, 0));
 
                 case Player.Black:
-                    return GetMoves(location, board, 1);
+                    return GetMoves(location, board, new Direction(1, 0));
 
                 default:
                     return new List<Square>();
             }
         }
 
-        private List<Square> GetMoves(Square location, Board board, int direction)
+        private List<Square> GetMoves(Square location, Board board, Direction direction)
         {
             List<Square> moves = new List<Square>();
-            Square moveLocation = new Square(location.Row + direction, location.Col);
+            Square moveLocation = location + direction;
 
             if (board.IsWithinBounds(moveLocation) && board.IsEmpty(moveLocation))
             {
-                moves.Add(new Square(location.Row + direction, location.Col));
+                moves.Add(moveLocation);
             }
             else
             {
                 return moves;
             }
 
-            moveLocation = new Square(location.Row + (direction * 2), location.Col);
+            moveLocation += direction;
             if (!HasMoved && board.IsWithinBounds(moveLocation) && board.IsEmpty(moveLocation))
             {
-                moves.Add(new Square(location.Row + direction * 2, location.Col));
+                moves.Add(moveLocation);
             }
 
             return moves;

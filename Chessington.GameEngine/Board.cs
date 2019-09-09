@@ -75,7 +75,13 @@ namespace Chessington.GameEngine
             return (square.Row >= 0 && square.Row < GameSettings.BoardSize) &&
                    (square.Col >= 0 && square.Col < GameSettings.BoardSize);
         }
-        
+
+        public List<Square> ClipToBoard(List<Square> moves)
+        {
+            moves.RemoveAll(s => !IsWithinBounds(s));
+            return moves;
+        }
+
         public delegate void PieceCapturedEventHandler(Piece piece);
         
         public event PieceCapturedEventHandler PieceCaptured;
