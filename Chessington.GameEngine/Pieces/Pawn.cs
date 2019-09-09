@@ -128,5 +128,29 @@ namespace Chessington.GameEngine.Pieces
 
             return moves;
         }
+
+        public override void MoveTo(Board board, Square newSquare)
+        {
+            var currentSquare = board.FindPiece(this);
+            board.MovePiece(currentSquare, newSquare);
+
+            if (currentSquare.Col != newSquare.Col)
+            {
+                Direction direction;
+
+                if (currentSquare.Col < newSquare.Col)
+                {
+                    direction = new Direction(0, 1);
+                }
+                else
+                {
+                    direction = new Direction(0, -1);
+                }
+
+                board.RemoveAt(currentSquare + direction);
+            }
+
+            HasMoved = true;
+        }
     }
 }

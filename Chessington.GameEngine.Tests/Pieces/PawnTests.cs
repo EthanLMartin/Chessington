@@ -203,17 +203,17 @@ namespace Chessington.GameEngine.Tests.Pieces
         }
 
         [Test]
-        public void BlackPawns_CanTakeMoveDiagonally_IfEnPassantIsActive()
+        public void WhitePawns_CanTakeMoveDiagonally_IfEnPassantIsActive()
         {
             var board = new Board();
             var pawn = new Pawn(Player.White);
             board.AddPiece(Square.At(4, 1), pawn);
 
             var enemyPiece = new Pawn(Player.Black);
-            board.AddPiece(Square.At(1,0), enemyPiece);
+            board.AddPiece(Square.At(1, 0), enemyPiece);
 
-            pawn.MoveTo(board,Square.At(3, 1));
-            enemyPiece.MoveTo(board, Square.At(3,0));
+            pawn.MoveTo(board, Square.At(3, 1));
+            enemyPiece.MoveTo(board, Square.At(3, 0));
 
             var moves = pawn.GetAvailableMoves(board).ToList();
 
@@ -237,7 +237,7 @@ namespace Chessington.GameEngine.Tests.Pieces
             enemyPawn.MoveTo(board, Square.At(3, 0));
 
             pawn.MoveTo(board, Square.At(3, 1));
-            enemyPiece.MoveTo(board, Square.At(7,7));
+            enemyPiece.MoveTo(board, Square.At(7, 7));
 
             var moves = pawn.GetAvailableMoves(board).ToList();
 
