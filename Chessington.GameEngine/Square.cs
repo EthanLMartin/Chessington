@@ -50,6 +50,16 @@
             return At(left.Row + right.RowDirection, left.Col + right.ColDirection);
         }
 
+        public static Square operator -(Square left, Direction right)
+        {
+            return At(left.Row - right.RowDirection, left.Col - right.ColDirection);
+        }
+
+        public static Direction operator -(Square left, Square right)
+        {
+            return new Direction(left.Row - right.Row, left.Col - right.Col);
+        }
+
         public override string ToString()
         {
             return string.Format("Row {0}, Col {1}", Row, Col);

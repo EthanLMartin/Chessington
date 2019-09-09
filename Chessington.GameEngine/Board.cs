@@ -10,7 +10,7 @@ namespace Chessington.GameEngine
         private readonly Piece[,] board;
         public Player CurrentPlayer { get; private set; }
         public IList<Piece> CapturedPieces { get; private set; }
-
+        public IList<Move> GameMoves { get; private set; } = new List<Move>();
         public Board()
             : this(Player.White) { }
 
@@ -62,12 +62,24 @@ namespace Chessington.GameEngine
                 OnPieceCaptured(board[to.Row, to.Col]);
             }
 
+            GameMoves.Add(new Move(movingPiece, from, to));
+
             //Move the piece and set the 'from' square to be empty.
             board[to.Row, to.Col] = board[from.Row, from.Col];
             board[from.Row, from.Col] = null;
 
             CurrentPlayer = movingPiece.Player == Player.White ? Player.Black : Player.White;
             OnCurrentPlayerChanged(CurrentPlayer);
+        }
+
+        public void RemoveAt(Square square)
+        {
+            if (board[square.Row, square.Col] != null)
+            {
+                OnPieceCaptured(board[square.Row, square.Col]);
+            }
+
+            board[square.Row, square.Col] = null;
         }
 
         public bool IsWithinBounds(Square square)
@@ -80,6 +92,36 @@ namespace Chessington.GameEngine
         {
             moves.RemoveAll(s => !IsWithinBounds(s));
             return moves;
+        }
+
+        public List<Move> GetPlayerMoves(Player player)
+        {
+            switch (player)
+            {
+                case Player.White:
+                    return GameMoves.Where(move => move.MovementPiece.Player == Player.White).ToList();
+
+                case Player.Black:
+                    return GameMoves.Where(move => move.MovementPiece.Player == Player.Black).ToList();
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(player), player, null);
+            }
+        }
+
+        public List<Move> GetEnemyMoves(Player player)
+        {
+            switch (player)
+            {
+                case Player.White:
+                    return GetPlayerMoves(Player.Black);
+
+                case Player.Black:
+                    return GetPlayerMoves(Player.White);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(player), player, null);
+            }
         }
 
         public delegate void PieceCapturedEventHandler(Piece piece);
@@ -100,6 +142,19 @@ namespace Chessington.GameEngine
         {
             var handler = CurrentPlayerChanged;
             if (handler != null) handler(player);
+        }
+    }
+
+    public struct Move
+    {
+        public readonly Piece MovementPiece;
+        public readonly Square SquareFrom;
+        public readonly Square SquareTo;
+
+        public Move(Piece piece, Square squareFrom, Square squareTo) {
+            MovementPiece = piece;
+            SquareFrom = squareFrom;
+            SquareTo = squareTo;
         }
     }
 }
