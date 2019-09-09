@@ -15,21 +15,41 @@ namespace Chessington.GameEngine.Pieces
 
             if (this.Player == Player.White)
             {
-                moves.Add(new Square(location.Row - 1, location.Col));
+                if (board.GetPiece(new Square(location.Row - 1, location.Col)) == null)
+                {
+                    moves.Add(new Square(location.Row - 1, location.Col));
+                }
+                else
+                {
+                    return moves;
+                }
 
                 if (!HasMoved)
                 {
-                    moves.Add(new Square(location.Row - 2, location.Col));
+                    if (board.GetPiece(new Square(location.Row - 2, location.Col)) == null)
+                    {
+                        moves.Add(new Square(location.Row - 2, location.Col));
+                    }
                 }
             }
 
             if (this.Player == Player.Black)
             {
-                moves.Add(new Square(location.Row + 1, location.Col));
+                if (board.GetPiece(new Square(location.Row + 1, location.Col)) == null)
+                {
+                    moves.Add(new Square(location.Row + 1, location.Col));
+                }
+                else
+                {
+                    return moves;
+                }
 
                 if (!HasMoved)
                 {
-                    moves.Add(new Square(location.Row + 2, location.Col));
+                    if (board.GetPiece(new Square(location.Row + 2, location.Col)) == null)
+                    {
+                        moves.Add(new Square(location.Row + 2, location.Col));
+                    }
                 }
             }
 
