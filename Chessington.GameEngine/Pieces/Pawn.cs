@@ -16,11 +16,21 @@ namespace Chessington.GameEngine.Pieces
             if (this.Player == Player.White)
             {
                 moves.Add(new Square(location.Row - 1, location.Col));
+
+                if (!hasMoved)
+                {
+                    moves.Add(new Square(location.Row - 2, location.Col));
+                }
             }
 
             if (this.Player == Player.Black)
             {
                 moves.Add(new Square(location.Row + 1, location.Col));
+
+                if (!hasMoved)
+                {
+                    moves.Add(new Square(location.Row + 2, location.Col));
+                }
             }
 
             return moves;
