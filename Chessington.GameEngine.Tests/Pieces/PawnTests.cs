@@ -201,5 +201,68 @@ namespace Chessington.GameEngine.Tests.Pieces
             moves.Should().NotContain(Square.At(6, 2));
             moves.Should().NotContain(Square.At(6, 4));
         }
+
+        [Test]
+        public void WhitePawns_CanTakeMoveDiagonally_IfEnPassantIsActive()
+        {
+            var board = new Board();
+            var pawn = new Pawn(Player.White);
+            board.AddPiece(Square.At(3, 1), pawn);
+
+            var enemyPiece = new Pawn(Player.Black);
+            board.AddPiece(Square.At(6,0), enemyPiece);
+
+            pawn.MoveTo(board,Square.At(4, 1));
+            enemyPiece.MoveTo(board, Square.At(4,0));
+
+            var moves = pawn.GetAvailableMoves(board).ToList();
+
+            moves.Should().Contain(Square.At(5, 0));
+        }
+
+        [Test]
+        public void WhitePawns_CannotTakeMoveDiagonally_IfEnPassantIsNoLongerActive()
+        {
+            var board = new Board();
+            var pawn = new Pawn(Player.White);
+            board.AddPiece(Square.At(2, 1), pawn);
+
+            var enemyPawn = new Pawn(Player.Black);
+            board.AddPiece(Square.At(6, 0), enemyPawn);
+
+            var enemyPiece = new Rook(Player.Black);
+            board.AddPiece(Square.At(7, 3), enemyPiece);
+
+            pawn.MoveTo(board, Square.At(3, 1));
+            enemyPawn.MoveTo(board, Square.At(4, 0));
+
+            pawn.MoveTo(board, Square.At(4, 1));
+            enemyPiece.MoveTo(board, Square.At(7,7));
+
+            var moves = pawn.GetAvailableMoves(board).ToList();
+
+            moves.Should().NotContain(Square.At(5, 0));
+        }
+
+        [Test]
+        public void WhitePawns_CannotTakeMoveEnPassant_IfEnemyPawnHasMovedMoreThanOnce()
+        {
+            var board = new Board();
+            var pawn = new Pawn(Player.White);
+            board.AddPiece(Square.At(2, 1), pawn);
+
+            var enemyPiece = new Pawn(Player.Black);
+            board.AddPiece(Square.At(6, 0), enemyPiece);
+
+            pawn.MoveTo(board, Square.At(3,1));
+            enemyPiece.MoveTo(board, Square.At(5, 0));
+
+            pawn.MoveTo(board, Square.At(4, 1));
+            enemyPiece.MoveTo(board, Square.At(4, 0));
+
+            var moves = pawn.GetAvailableMoves(board).ToList();
+
+            moves.Should().NotContain(Square.At(5, 0));
+        }
     }
 }

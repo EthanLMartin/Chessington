@@ -8,7 +8,7 @@ namespace Chessington.GameEngine.Pieces
     {
         public Pawn(Player player) 
             : base(player) { }
-
+        
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
             Square location = board.FindPiece(this);
