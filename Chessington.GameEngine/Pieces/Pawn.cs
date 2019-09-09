@@ -11,46 +11,57 @@ namespace Chessington.GameEngine.Pieces
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
             Square location = board.FindPiece(this);
+
+            switch (this.Player)
+            {
+                case Player.White:
+                    return GetMovesWhite(location, board);
+
+                case Player.Black:
+                    return GetMovesBlack(location, board);
+
+                default:
+                    return new List<Square>();
+            }
+        }
+
+        private List<Square> GetMovesWhite(Square location, Board board)
+        {
             List<Square> moves = new List<Square>();
 
-            if (this.Player == Player.White)
+            if (board.IsEmpty(location.Row - 1, location.Col))
             {
-                if (board.GetPiece(new Square(location.Row - 1, location.Col)) == null)
-                {
-                    moves.Add(new Square(location.Row - 1, location.Col));
-                }
-                else
-                {
-                    return moves;
-                }
-
-                if (!HasMoved)
-                {
-                    if (board.GetPiece(new Square(location.Row - 2, location.Col)) == null)
-                    {
-                        moves.Add(new Square(location.Row - 2, location.Col));
-                    }
-                }
+                moves.Add(new Square(location.Row - 1, location.Col));
+            }
+            else
+            {
+                return moves;
             }
 
-            if (this.Player == Player.Black)
+            if (!HasMoved && board.IsEmpty(location.Row - 2, location.Col))
             {
-                if (board.GetPiece(new Square(location.Row + 1, location.Col)) == null)
-                {
-                    moves.Add(new Square(location.Row + 1, location.Col));
-                }
-                else
-                {
-                    return moves;
-                }
+                moves.Add(new Square(location.Row - 2, location.Col));
+            }
 
-                if (!HasMoved)
-                {
-                    if (board.GetPiece(new Square(location.Row + 2, location.Col)) == null)
-                    {
-                        moves.Add(new Square(location.Row + 2, location.Col));
-                    }
-                }
+            return moves;
+        }
+
+        private List<Square> GetMovesBlack(Square location, Board board)
+        {
+            List<Square> moves = new List<Square>();
+
+            if (board.IsEmpty(location.Row + 1, location.Col))
+            {
+                moves.Add(new Square(location.Row + 1, location.Col));
+            }
+            else
+            {
+                return moves;
+            }
+
+            if (!HasMoved && board.IsEmpty(location.Row + 2, location.Col))
+            {
+                moves.Add(new Square(location.Row + 2, location.Col));
             }
 
             return moves;
