@@ -21,27 +21,22 @@ namespace Chessington.GameEngine.Pieces
             return moves;
         }
 
-        private List<Square> GetDiagonalMoves(Square location, Board board, int rowOffset, int colOffset)
+        private List<Square> GetDiagonalMoves(Square location, Board board, int rowDirection, int colDirection)
         {
             List<Square> moves = new List<Square>();
 
-            int curRowOffset = rowOffset;
-            int curColOffset = colOffset;
+            int rowOffset = rowDirection;
+            int colOffset = colDirection;
 
-            Square newLocation = new Square(location.Row + curRowOffset, location.Col + curColOffset);
-
-            while (board.IsWithinBounds(newLocation))
+            while (board.IsWithinBounds(new Square(location.Row + rowOffset, location.Col + colOffset)))
             {
-                moves.Add(newLocation);
-
-                if (!board.IsEmpty(location.Row + curRowOffset, location.Col + curColOffset))
+                moves.Add(new Square(location.Row + rowOffset, location.Col + colOffset));
+                if (!board.IsEmpty(location.Row + rowOffset, location.Col + colOffset))
                 {
                     break;
                 }
-
-                curRowOffset += rowOffset;
-                curColOffset += colOffset;
-                newLocation = new Square(location.Row + curRowOffset, location.Col + curColOffset);
+                rowOffset += rowDirection;
+                colOffset += colDirection;
             }
 
             return moves;
