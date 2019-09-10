@@ -76,5 +76,48 @@ namespace Chessington.GameEngine.Tests.Pieces
             var moves = king.GetAvailableMoves(board);
             moves.Should().NotContain(Square.At(4, 5));
         }
+
+        [Test]
+        public void Kings_CanCastleRook_IfNeitherHaveMovedBefore()
+        {
+            var board = new Board();
+            var king = new King(Player.White);
+            board.AddPiece(Square.At(7, 5), king);
+            var rook = new Rook(Player.White);
+            board.AddPiece(Square.At(7, 0), rook);
+
+            var moves = king.GetAvailableMoves(board);
+            moves.Should().Contain(Square.At(7, 3));
+        }
+
+        [Test]
+        public void Kings_CannotCastleRook_IfKingHasMovedBefore()
+        {
+            var board = new Board();
+            var king = new King(Player.White);
+            board.AddPiece(Square.At(7, 6), king);
+            var rook = new Rook(Player.White);
+            board.AddPiece(Square.At(7, 0), rook);
+
+            king.MoveTo(board, new Square(7, 5));
+
+            var moves = king.GetAvailableMoves(board);
+            moves.Should().NotContain(Square.At(7, 3));
+        }
+
+        [Test]
+        public void Kings_CannotCastleRook_IfRookHasMovedBefore()
+        {
+            var board = new Board();
+            var king = new King(Player.White);
+            board.AddPiece(Square.At(7, 5), king);
+            var rook = new Rook(Player.White);
+            board.AddPiece(Square.At(4, 0), rook);
+
+            rook.MoveTo(board, new Square(7, 0));
+
+            var moves = king.GetAvailableMoves(board);
+            moves.Should().NotContain(Square.At(7, 3));
+        }
     }
 }
