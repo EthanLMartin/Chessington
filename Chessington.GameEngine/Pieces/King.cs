@@ -23,6 +23,23 @@ namespace Chessington.GameEngine.Pieces
             return moves;
         }
 
+        public override void MoveTo(Board board, Square newSquare)
+        {
+            var currentSquare = board.FindPiece(this);
+            int colDirection = (newSquare - currentSquare).ColDirection;
+
+            Turn turn = new Turn(this, currentSquare, newSquare);
+
+            if (Math.Abs(colDirection) > 1)
+            {
+                turn += MoveCastleRook(board, currentSquare, colDirection);
+            }
+
+            board.MovePiece(currentSquare, newSquare);
+
+            board.GameTurns.Add(turn);
+        }
+
         private List<Square> GetAdjacentMoves(Square location)
         {
             List<Square> moves = new List<Square>
@@ -44,7 +61,7 @@ namespace Chessington.GameEngine.Pieces
         {
             List<Square> moves = new List<Square>();
 
-            if (HasMoved)
+            if (board.HasMoved(this))
             {
                 return moves;
             }
@@ -53,13 +70,13 @@ namespace Chessington.GameEngine.Pieces
             Direction right = new Direction(0, 1);
 
             Piece piece = board.FindPieceFrom(this, left);
-            if (piece is Rook && !piece.HasMoved)
+            if (piece is Rook && !board.HasMoved(piece))
             {
                 moves.Add(location + left + left);
             }
 
             piece = board.FindPieceFrom(this, right);
-            if (piece is Rook && !piece.HasMoved)
+            if (piece is Rook && !board.HasMoved(piece))
             {
                 moves.Add(location + right + right);
             }
@@ -67,22 +84,7 @@ namespace Chessington.GameEngine.Pieces
             return moves;
         }
 
-        public override void MoveTo(Board board, Square newSquare)
-        {
-            var currentSquare = board.FindPiece(this);
-
-            int colDirection = (newSquare - currentSquare).ColDirection;
-
-            if (Math.Abs(colDirection) > 1)
-            {
-                MoveCastleRook(board, currentSquare, colDirection);
-            }
-
-            board.MovePiece(currentSquare, newSquare);
-            HasMoved = true;
-        }
-
-        private void MoveCastleRook(Board board, Square kingSquare, int colDirection)
+        private Movement MoveCastleRook(Board board, Square kingSquare, int colDirection)
         {
             Direction direction;
             if (colDirection < 0)
@@ -96,7 +98,11 @@ namespace Chessington.GameEngine.Pieces
 
             Piece rook = board.FindPieceFrom(board.GetPiece(kingSquare), direction);
 
+            Movement movement = new Movement(rook, board.FindPiece(rook), kingSquare + direction);
+
             board.ForceMovePiece(rook, kingSquare + direction);
+
+            return movement;
         }
     }
 }

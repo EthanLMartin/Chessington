@@ -28,6 +28,30 @@ namespace Chessington.GameEngine.Pieces
             }
         }
 
+        public override void MoveTo(Board board, Square newSquare)
+        {
+            var currentSquare = board.FindPiece(this);
+            board.MovePiece(currentSquare, newSquare);
+
+            if (currentSquare.Col != newSquare.Col)
+            {
+                Direction direction;
+
+                if (currentSquare.Col < newSquare.Col)
+                {
+                    direction = new Direction(0, 1);
+                }
+                else
+                {
+                    direction = new Direction(0, -1);
+                }
+
+                board.RemoveAt(currentSquare + direction);
+            }
+
+            board.GameTurns.Add(new Turn(this, currentSquare, newSquare));
+        }
+
         private List<Square> GetMoves(Square location, Board board, Direction direction)
         {
             List<Square> moves = new List<Square>();
@@ -54,7 +78,7 @@ namespace Chessington.GameEngine.Pieces
             }
 
             moveLocation += direction;
-            if (!HasMoved && board.IsWithinBounds(moveLocation) && board.IsEmpty(moveLocation))
+            if (!board.HasMoved(this) && board.IsWithinBounds(moveLocation) && board.IsEmpty(moveLocation))
             {
                 moves.Add(moveLocation);
             }
@@ -84,73 +108,40 @@ namespace Chessington.GameEngine.Pieces
             return moves;
         }
 
-        private List<Square> CheckEnPassantMoves(Square location, Board board, Direction direction)
+        private IEnumerable<Square> CheckEnPassantMoves(Square location, Board board, Direction direction)
         {
             Square leftDiagonal = location + direction + new Direction(0, -1);
             Square rightDiagonal = location + direction + new Direction(0, 1);
+            
+            Turn lastEnemyTurn = board.GetEnemyTurns(Player).LastOrDefault();
 
-            List<Square> moves = new List<Square>();
-
-            List<Move> enemyMoves = board.GetEnemyMoves(this.Player);
-
-            if (enemyMoves.Count == 0)
+            if (!IsPawnDoubleAdvanceMove(lastEnemyTurn))
             {
-                return moves;
-            }
-
-            Move lastEnemyMove = enemyMoves[enemyMoves.Count - 1];
-
-            if (!(lastEnemyMove.MovementPiece is Pawn))
-            {
-                return moves;
-            }
-
-            if (Math.Abs((lastEnemyMove.SquareTo - lastEnemyMove.SquareFrom).RowDirection) == 1)
-            {
-                return moves;
+                yield break;
             }
 
             if (board.IsWithinBounds(leftDiagonal) && board.IsEmpty(leftDiagonal))
             {
-                if (lastEnemyMove.SquareTo == (leftDiagonal - direction))
+                if (lastEnemyTurn.Moves.First().SquareTo == (leftDiagonal - direction))
                 {
-                    moves.Add(leftDiagonal);
+                    yield return leftDiagonal;
                 }
             }
 
             if (board.IsWithinBounds(rightDiagonal) && board.IsEmpty(rightDiagonal))
             {
-                if (lastEnemyMove.SquareTo == (rightDiagonal - direction))
+                if (lastEnemyTurn.Moves.First().SquareTo == (rightDiagonal - direction))
                 {
-                    moves.Add(rightDiagonal);
+                    yield return rightDiagonal;
                 }
             }
-
-            return moves;
         }
 
-        public override void MoveTo(Board board, Square newSquare)
+        private static bool IsPawnDoubleAdvanceMove(Turn turn)
         {
-            var currentSquare = board.FindPiece(this);
-            board.MovePiece(currentSquare, newSquare);
-
-            if (currentSquare.Col != newSquare.Col)
-            {
-                Direction direction;
-
-                if (currentSquare.Col < newSquare.Col)
-                {
-                    direction = new Direction(0, 1);
-                }
-                else
-                {
-                    direction = new Direction(0, -1);
-                }
-
-                board.RemoveAt(currentSquare + direction);
-            }
-
-            HasMoved = true;
+            return turn?.MainPiece is Pawn && 
+                   turn.PiecesInTurn() == 1 &&
+                   Math.Abs((turn.Moves.First().SquareTo - turn.Moves.First().SquareFrom).RowDirection) > 1;
         }
     }
 }

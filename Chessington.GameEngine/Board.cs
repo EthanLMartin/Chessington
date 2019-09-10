@@ -11,7 +11,8 @@ namespace Chessington.GameEngine
         private readonly Piece[,] board;
         public Player CurrentPlayer { get; private set; }
         public IList<Piece> CapturedPieces { get; private set; }
-        public IList<Move> GameMoves { get; private set; } = new List<Move>();
+        public IList<Turn> GameTurns { get; } = new List<Turn>();
+
         public Board()
             : this(Player.White) { }
 
@@ -80,8 +81,6 @@ namespace Chessington.GameEngine
                 OnPieceCaptured(board[to.Row, to.Col]);
             }
 
-            GameMoves.Add(new Move(movingPiece, from, to));
-
             //Move the piece and set the 'from' square to be empty.
             board[to.Row, to.Col] = board[from.Row, from.Col];
             board[from.Row, from.Col] = null;
@@ -98,6 +97,11 @@ namespace Chessington.GameEngine
             board[from.Row, from.Col] = null;
         }
 
+        public bool HasMoved(Piece piece)
+        {
+            return GameTurns.Any(turn => turn.Moves.Any(move => move.MovementPiece == piece));
+        }
+
         public void RemoveAt(Square square)
         {
             if (board[square.Row, square.Col] != null)
@@ -107,7 +111,6 @@ namespace Chessington.GameEngine
 
             board[square.Row, square.Col] = null;
         }
-
 
         public bool IsWithinBounds(Square square)
         {
@@ -121,34 +124,39 @@ namespace Chessington.GameEngine
             return moves;
         }
 
-        public List<Move> GetPlayerMoves(Player player)
+        public List<Turn> GetPlayerTurns(Player player)
         {
             switch (player)
             {
                 case Player.White:
-                    return GameMoves.Where(move => move.MovementPiece.Player == Player.White).ToList();
+                    return GameTurns.Where(turn => turn.Player == Player.White).ToList();
 
                 case Player.Black:
-                    return GameMoves.Where(move => move.MovementPiece.Player == Player.Black).ToList();
+                    return GameTurns.Where(turn => turn.Player == Player.Black).ToList();
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(player), player, null);
             }
         }
 
-        public List<Move> GetEnemyMoves(Player player)
+        public List<Turn> GetEnemyTurns(Player player)
         {
             switch (player)
             {
                 case Player.White:
-                    return GetPlayerMoves(Player.Black);
+                    return GetPlayerTurns(Player.Black);
 
                 case Player.Black:
-                    return GetPlayerMoves(Player.White);
+                    return GetPlayerTurns(Player.White);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(player), player, null);
             }
+        }
+
+        public List<Square> GetEnemyMarkedSquares(Player player)
+        {
+            return null;
         }
 
         public delegate void PieceCapturedEventHandler(Piece piece);
@@ -169,19 +177,6 @@ namespace Chessington.GameEngine
         {
             var handler = CurrentPlayerChanged;
             if (handler != null) handler(player);
-        }
-    }
-
-    public struct Move
-    {
-        public readonly Piece MovementPiece;
-        public readonly Square SquareFrom;
-        public readonly Square SquareTo;
-
-        public Move(Piece piece, Square squareFrom, Square squareTo) {
-            MovementPiece = piece;
-            SquareFrom = squareFrom;
-            SquareTo = squareTo;
         }
     }
 }
