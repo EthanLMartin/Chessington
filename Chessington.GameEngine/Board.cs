@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using Chessington.GameEngine.Pieces;
 
@@ -28,7 +29,11 @@ namespace Chessington.GameEngine
     
         public Piece GetPiece(Square square)
         {
-            return board[square.Row, square.Col];
+            if (IsWithinBounds(square)) {
+                return board[square.Row, square.Col];
+            }
+
+            return null;
         }
 
         public bool IsEmpty(Square location)
@@ -44,6 +49,19 @@ namespace Chessington.GameEngine
                         return Square.At(row, col);
 
             throw new ArgumentException("The supplied piece is not on the board.", "piece");
+        }
+
+        public Piece FindPieceFrom(Piece piece, Direction direction)
+        {
+            Square location = FindPiece(piece);
+
+            Square newLocation = location + direction;
+            while (IsWithinBounds(newLocation) && IsEmpty(newLocation))
+            {
+                newLocation += direction;
+            }
+
+            return GetPiece(newLocation);
         }
 
         public void MovePiece(Square from, Square to)
@@ -72,6 +90,14 @@ namespace Chessington.GameEngine
             OnCurrentPlayerChanged(CurrentPlayer);
         }
 
+        public void ForceMovePiece(Piece piece, Square to)
+        {
+            Square from = FindPiece(piece);
+
+            board[to.Row, to.Col] = board[from.Row, from.Col];
+            board[from.Row, from.Col] = null;
+        }
+
         public void RemoveAt(Square square)
         {
             if (board[square.Row, square.Col] != null)
@@ -81,6 +107,7 @@ namespace Chessington.GameEngine
 
             board[square.Row, square.Col] = null;
         }
+
 
         public bool IsWithinBounds(Square square)
         {
